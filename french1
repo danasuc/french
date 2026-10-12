@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тренажёр по грамматике: Leçons 17–19</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --accent: #d97706;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --success: #15803d;
+      --success-bg: #dcfce7;
+      --error: #b91c1c;
+      --error-bg: #fee2e2;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px 16px 80px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: 1.85rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .dashboard {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .stat-badge {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary);
+      background: #eff6ff;
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+
+    .progress-bar-container {
+      background: #e2e8f0;
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      background: linear-gradient(90deg, var(--primary-light), var(--accent));
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .filter-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .task-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+    }
+
+    .tag {
+      background: #f1f5f9;
+      color: var(--muted);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .task-number {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .task-prompt {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .prompt-hint {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: normal;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option-btn {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: #eff6ff;
+      border-color: var(--primary-light);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-btn.correct {
+      background: var(--success-bg) !important;
+      border-color: var(--success) !important;
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .option-btn.incorrect {
+      background: var(--error-bg) !important;
+      border-color: var(--error) !important;
+      color: var(--error);
+      font-weight: 600;
+    }
+
+    .text-input-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .text-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .text-input:focus {
+      outline: 2px solid var(--primary-light);
+      border-color: transparent;
+    }
+
+    .check-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .check-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+    }
+
+    .check-btn:disabled {
+      background: #cbd5e1;
+      cursor: not-allowed;
+    }
+
+    .explanation {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .explanation.show {
+      display: block;
+    }
+
+    .explanation.correct {
+      background: var(--success-bg);
+      border-left: 4px solid var(--success);
+      color: #14532d;
+    }
+
+    .explanation.incorrect {
+      background: var(--error-bg);
+      border-left: 4px solid var(--error);
+      color: #7f1d1d;
+    }
+
+    .reset-btn {
+      display: block;
+      margin: 32px auto 0;
+      background: transparent;
+      border: 1px solid var(--muted);
+      color: var(--muted);
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .reset-btn:hover {
+      background: #f1f5f9;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Тренажёр по грамматике французского языка</h1>
+    <p>Подготовка к рубежному контролю: Leçons 17, 18, 19 (Nouveau Virage)</p>
+  </header>
+
+  <div class="dashboard">
+    <div class="stats">
+      <span class="stat-badge" id="counter-answered">Выполнено: 0 / 25</span>
+      <span class="stat-badge" id="counter-score">Баллы: 0%</span>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">Все задания (25)</button>
+    <button class="filter-btn" data-filter="l17-pronominal">Passé composé возвратных (§70)</button>
+    <button class="filter-btn" data-filter="cod-coi">Местоимения COD и COI (§71, §75)</button>
+    <button class="filter-btn" data-filter="verbs3">Глаголы III группы: voir, écrire, mettre (§72, §73, §76)</button>
+    <button class="filter-btn" data-filter="pc-vs-imp">Passé composé vs Imparfait (§74, §77)</button>
+    <button class="filter-btn" data-filter="questions">Вопросы: que / qu'est-ce que / qu'est-ce qui (§78, §79)</button>
+  </div>
+
+  <main id="tasks-container"></main>
+
+  <button class="reset-btn" id="reset-btn">Сбросить прогресс и начать заново</button>
+</div>
+
+<script>
+const tasks = [
+  // --- LEÇON 17: Passé composé возвратных глаголов (§70) ---
+  {
+    id: 1,
+    tag: "l17-pronominal",
+    type: "choice",
+    prompt: "Hier matin, Martine ______ de bonne heure pour aller au bureau.",
+    hint: "Глагол se réveiller в Passé composé.",
+    options: [
+      "s'est réveillé",
+      "s'est réveillée",
+      "a réveillé",
+      "est réveillée"
+    ],
+    correct: 1,
+    explanation: "Все возвратные глаголы спрягаются с être. Подлежащее Martine — женский род, поэтому причастие принимает окончание согласия: s'est réveillée."
+  },
+  {
+    id: 2,
+    tag: "l17-pronominal",
+    type: "choice",
+    prompt: "Sélectionnez la phrase interrogative correcte (сложная инверсия):",
+    hint: "Мартина и Жак поженились в апреле?",
+    options: [
+      "Jacques et Martine se sont-ils mariés en avril ?",
+      "Sont-ils se mariés Jacques et Martine en avril ?",
+      "Jacques et Martine ont-ils marié en avril ?",
+      "Jacques et Martine se sont-elles mariées en avril ?"
+    ],
+    correct: 0,
+    explanation: "При сложной инверсии подлежащее-существительное остаётся в начале, а после вспомогательного глагола ставится повторяющее его местоимение (ils): se sont-ils mariés."
+  },
+  {
+    id: 3,
+    tag: "l17-pronominal",
+    type: "input",
+    prompt: "Поставьте глагол в отрицательную форму Passé composé: Denise (ne pas se coucher) tard.",
+    hint: "Впишите только сказуемое (например: ne s'est pas ...)",
+    answers: ["ne s'est pas couchée"],
+    explanation: "Отрицание ne... pas охватывает связку возвратной частицы и вспомогательного être. Дениза женского рода: ne s'est pas couchée."
+  },
+  {
+    id: 4,
+    tag: "l17-pronominal",
+    type: "choice",
+    prompt: "Avant la représentation théâtrale, nous (femmes) ______ dans le foyer.",
+    hint: "Глагол se rencontrer (Passé composé, мы — женщины).",
+    options: [
+      "nous sommes rencontrés",
+      "nous avons rencontré",
+      "nous sommes rencontrées",
+      "nous nous sommes rencontrées"
+    ],
+    correct: 3,
+    explanation: "Обязательны два местоимения (nous nous), глагол être (sommes) и согласование причастия в женском роде множественного числа: rencontrées."
+  },
+
+  // --- LEÇON 17 & 18: Прямые и косвенные местоимения (COD §71 & COI §75) ---
+  {
+    id: 5,
+    tag: "cod-coi",
+    type: "choice",
+    prompt: "Tu as acheté les billets pour l'Opéra ? — Oui, je ______ ai réservés en ligne.",
+    hint: "Замените прямое дополнение les billets.",
+    options: ["les", "leur", "l'", "en"],
+    correct: 0,
+    explanation: "Les billets — прямое дополнение множественного числа (COD), поэтому используется местоимение les."
+  },
+  {
+    id: 6,
+    tag: "cod-coi",
+    type: "choice",
+    prompt: "Martine a téléphoné à sa belle-mère ? — Oui, elle ______ a téléphoné ce matin.",
+    hint: "Глагол téléphoner à qn требует косвенного дополнения (COI).",
+    options: ["la", "l'", "lui", "leur"],
+    correct: 2,
+    explanation: "Téléphoner кому-то (à sa belle-mère) — косвенное дополнение единственного числа (COI). Форма для женского и мужского рода — lui."
+  },
+  {
+    id: 7,
+    tag: "cod-coi",
+    type: "choice",
+    prompt: "Les critiques de la pièce sont sévères. Ne ______ lisez pas avant le spectacle !",
+    hint: "Замените ces critiques в отрицательном повелительном наклонении.",
+    options: ["leur", "les", "la", "des"],
+    correct: 1,
+    explanation: "Lire quoi? — ces critiques (COD, мн. ч. -> les). В отрицательном Impératif местоимение стоит перед глаголом: Ne les lisez pas."
+  },
+  {
+    id: 8,
+    tag: "cod-coi",
+    type: "choice",
+    prompt: "C'est un beau gâteau d'anniversaire. Donne-______ à Patrick !",
+    hint: "Утвердительное повелительное наклонение: 'Дай его...'",
+    options: ["le-lui", "lui-le", "le", "la"],
+    correct: 2,
+    explanation: "Заменяем le gâteau (COD). В утвердительном повелительном наклонении местоимение ставится после глагола через дефис: Donne-le !"
+  },
+  {
+    id: 9,
+    tag: "cod-coi",
+    type: "choice",
+    prompt: "Jacques écrit souvent à ses collègues ? — Oui, il ______ écrit des courriels chaque semaine.",
+    hint: "Ecrire à qui? (à ses collègues — COI во множественном числе).",
+    options: ["les", "leur", "lui", "y"],
+    correct: 1,
+    explanation: "Ecrire à qn во множественном числе заменяется на leur (косвенное дополнение): il leur écrit."
+  },
+  {
+    id: 10,
+    tag: "cod-coi",
+    type: "input",
+    prompt: "Перепишите в повелительном наклонении, заменив меня на местоимение: Tu m'écoutes! -> ______ !",
+    hint: "В утвердительной форме me переходит в moi.",
+    answers: ["Ecoute-moi", "écoute-moi", "Écoute-moi"],
+    explanation: "В утвердительном Impératif местоимение me переходит в ударную форму moi и пишется через дефис после глагола: Ecoute-moi !"
+  },
+
+  // --- LEÇON 17 & 18: Глаголы III группы (voir §72, écrire §73, mettre §76) ---
+  {
+    id: 11,
+    tag: "verbs3",
+    type: "choice",
+    prompt: "Nous ______ souvent des mises en scène classiques à la Comédie-Française.",
+    hint: "Глагол voir в настоящем времени (nous).",
+    options: ["voyons", "voyez", "voient", "vons"],
+    correct: 0,
+    explanation: "Форма глагола voir в 1 лице мн. ч. (nous) — nous voyons."
+  },
+  {
+    id: 12,
+    tag: "verbs3",
+    type: "choice",
+    prompt: "Le médecin a examiné la malade et lui ______ des comprimés efficaces.",
+    hint: "Глагол prescrire в Passé composé.",
+    options: ["a prescrivé", "a prescrit", "est prescrit", "a prescris"],
+    correct: 1,
+    explanation: "Глаголы группы écrire имеют причастие на -t: prescrire -> a prescrit."
+  },
+  {
+    id: 13,
+    tag: "verbs3",
+    type: "input",
+    prompt: "Поставьте глагол mettre в форму настоящего времени: Vous (mettre) le couvert dans le salon.",
+    hint: "Впишите только форму глагола.",
+    answers: ["mettez"],
+    explanation: "Спряжение глагола mettre во 2 лице мн. ч. (vous) — vous mettez."
+  },
+  {
+    id: 14,
+    tag: "verbs3",
+    type: "choice",
+    prompt: "Jacques a promis d'arriver à l'heure, et il ______ toujours ses promesses.",
+    hint: "Глагол tenir или mettre в Présent (il).",
+    options: ["met", "tient", "mets", "tiens"],
+    correct: 0,
+    explanation: "Il met (окончание -t). В инфинитиве mettre / promettre основа met-: il met / il promet."
+  },
+  {
+    id: 15,
+    tag: "verbs3",
+    type: "choice",
+    prompt: "Hier, nous avons assisté au spectacle et nous ______ tous les décors.",
+    hint: "Participe passé глагола voir.",
+    options: ["avons vus", "avons vu", "sommes vu", "avons voyé"],
+    correct: 1,
+    explanation: "Глагол voir спрягается с avoir: nous avons vu. Прямое дополнение стоит после глагола, согласования нет."
+  },
+
+  // --- LEÇON 18 & 19: Imparfait и Passé composé vs Imparfait (§74, §77) ---
+  {
+    id: 16,
+    tag: "pc-vs-imp",
+    type: "choice",
+    prompt: "Какова форма глагола être в Imparfait для местоимения nous?",
+    hint: "Основа ét- + окончание Imparfait.",
+    options: ["étions", "étiez", "sommes", "faisions"],
+    correct: 0,
+    explanation: "Единственное исключение в основе Imparfait — глагол être (ét-). Форма с nous: nous étions."
+  },
+  {
+    id: 17,
+    tag: "pc-vs-imp",
+    type: "choice",
+    prompt: "Quand nous étions jeunes, nous ______ souvent au cinéma le samedi soir.",
+    hint: "Регулярное повторяющееся действие в прошлом (aller).",
+    options: ["sommes allés", "allions", "allons", "étions allés"],
+    correct: 1,
+    explanation: "Регулярность, привычка в прошлом (souvent le samedi soir) передаётся временем Imparfait: nous allions."
+  },
+  {
+    id: 18,
+    tag: "pc-vs-imp",
+    type: "choice",
+    prompt: "Pendant que Martine ______ le repas, le téléphone a sonné.",
+    hint: "Длительный процесс/фон, на фоне которого произошло внезапное событие.",
+    options: ["a préparé", "préparait", "prépare", "est préparée"],
+    correct: 1,
+    explanation: "Длительное действие-фон в момент наступления другого события выражается через Imparfait: pendant que Martine préparait..."
+  },
+  {
+    id: 19,
+    tag: "pc-vs-imp",
+    type: "choice",
+    prompt: "Tout à coup, la porte s'est ouverte et un homme ______ dans la pièce.",
+    hint: "Внезапное однократное законченное действие (entrer).",
+    options: ["entrait", "est entré", "a entré", "entre"],
+    correct: 1,
+    explanation: "Маркер 'tout à coup' указывает на внезапное завершённое сюжетное действие (Passé composé): est entré."
+  },
+  {
+    id: 20,
+    tag: "pc-vs-imp",
+    type: "choice",
+    prompt: "Hier, il ______ mauvais et il y ______ beaucoup de vent dehors.",
+    hint: "Описание погоды в прошлом (faire, avoir).",
+    options: [
+      "a fait / a eu",
+      "faisait / avait",
+      "faisait / a eu",
+      "a fait / avait"
+    ],
+    correct: 1,
+    explanation: "Описание погоды и обстановки как состояния в прошлом требует Imparfait: il faisait mauvais, il y avait du vent."
+  },
+  {
+    id: 21,
+    tag: "pc-vs-imp",
+    type: "input",
+    prompt: "Поставьте глагол finir в Imparfait для местоимения ils: Ils (finir) leur travail à dix-huit heures.",
+    hint: "Основа nous finiss-ons + окончание -aient.",
+    answers: ["finissaient"],
+    explanation: "Глаголы II группы берут суффикс -iss-: nous finissons -> основа finiss- + окончание -aient -> finissaient."
+  },
+
+  // --- LEÇON 19: Вопросительные конструкции que / qu'est-ce que / qu'est-ce qui (§78, §79) ---
+  {
+    id: 22,
+    tag: "questions",
+    type: "choice",
+    prompt: "______ s'est passé dans la rue hier soir ?",
+    hint: "Вопрос к неодушевлённому подлежащему: 'Что произошло?'",
+    options: ["Qu'est-ce que", "Qu'est-ce qui", "Que", "Qui est-ce que"],
+    correct: 1,
+    explanation: "Вопрос 'что?' к подлежащему (само действие совершается этим предметом/событием) строится с помощью Qu'est-ce qui."
+  },
+  {
+    id: 23,
+    tag: "questions",
+    type: "choice",
+    prompt: "______ vous avez acheté au supermarché pour le dîner ?",
+    hint: "Вопрос к прямому дополнению без инверсии: 'Что вы купили?'",
+    options: ["Qu'est-ce qui", "Qu'est-ce que", "Qui", "Que"],
+    correct: 1,
+    explanation: "Вопрос к прямому дополнению без инверсии формулируется как Qu'est-ce que (Qu'est-ce que vous avez acheté?)."
+  },
+  {
+    id: 24,
+    tag: "questions",
+    type: "choice",
+    prompt: "Выберите вариант вопроса к прямому дополнению С ИНВЕРСИЕЙ:",
+    hint: "'Что вы говорите?'",
+    options: [
+      "Qu'est-ce que vous dites ?",
+      "Que dites-vous ?",
+      "Qu'est-ce qui dites-vous ?",
+      "Qui dites-vous ?"
+    ],
+    correct: 1,
+    explanation: "Краткое вопросительное местоимение Que в вопросе к прямому дополнению требует инверсии: Que dites-vous ?"
+  },
+  {
+    id: 25,
+    tag: "questions",
+    type: "choice",
+    prompt: "Le médecin demande à Martine : '______ ne va pas ?'",
+    hint: "Устойчивый вопрос доктора из урока: 'Что не в порядке / что болит?'",
+    options: ["Qu'est-ce que", "Qu'est-ce qui", "Que", "Qui"],
+    correct: 1,
+    explanation: "В выражении 'Qu'est-ce qui ne va pas ?' вопросительное местообразование является подлежащим: Qu'est-ce qui."
+  }
+];
+
+let userAnswers = {};
+
+function renderTasks(filter = "all") {
+  const container = document.getElementById("tasks-container");
+  container.innerHTML = "";
+
+  const filteredTasks = filter === "all" ? tasks : tasks.filter(t => t.tag === filter);
+
+  filteredTasks.forEach((task, index) => {
+    const card = document.createElement("div");
+    card.className = "task-card";
+    card.id = `card-${task.id}`;
+
+    const answered = userAnswers.hasOwnProperty(task.id);
+    const isCorrect = userAnswers[task.id]?.isCorrect;
+
+    let content = `
+      <div class="task-header">
+        <span class="tag">${getTagName(task.tag)}</span>
+        <span class="task-number">Задание #${task.id}</span>
+      </div>
+      <div class="task-prompt">
+        ${task.prompt}
+        ${task.hint ? `<span class="prompt-hint">${task.hint}</span>` : ""}
+      </div>
+    `;
+
+    if (task.type === "choice") {
+      content += `<div class="options">`;
+      task.options.forEach((opt, optIdx) => {
+        let optClass = "option-btn";
+        if (answered) {
+          if (optIdx === task.correct) optClass += " correct";
+          else if (userAnswers[task.id].userVal === optIdx) optClass += " incorrect";
+        }
+        content += `
+          <button class="${optClass}" 
+                  ${answered ? "disabled" : ""} 
+                  onclick="handleChoice(${task.id}, ${optIdx})">
+            ${opt}
+          </button>
+        `;
+      });
+      content += `</div>`;
+    } else if (task.type === "input") {
+      const val = answered ? userAnswers[task.id].userVal : "";
+      content += `
+        <div class="text-input-group">
+          <input type="text" class="text-input" id="input-${task.id}" 
+                 value="${val}" 
+                 placeholder="Введите ответ на французском..." 
+                 ${answered ? "disabled" : ""}
+                 onkeydown="if(event.key === 'Enter') handleInput(${task.id})">
+          <button class="check-btn" 
+                  ${answered ? "disabled" : ""} 
+                  onclick="handleInput(${task.id})">
+            Проверить
+          </button>
+        </div>
+      `;
+    }
+
+    let expClass = "explanation";
+    if (answered) {
+      expClass += " show " + (isCorrect ? "correct" : "incorrect");
+    }
+
+    content += `
+      <div class="${expClass}" id="exp-${task.id}">
+        <strong>${isCorrect ? "Верно!" : "Неверно."}</strong> ${task.explanation}
+      </div>
+    `;
+
+    card.innerHTML = content;
+    container.appendChild(card);
+  });
+}
+
+function getTagName(tag) {
+  switch (tag) {
+    case "l17-pronominal": return "Passé composé возвратных";
+    case "cod-coi": return "COD / COI";
+    case "verbs3": return "Глаголы III группы";
+    case "pc-vs-imp": return "Passé composé vs Imparfait";
+    case "questions": return "Вопросительные обороты";
+    default: return "Грамматика";
+  }
+}
+
+function handleChoice(taskId, selectedIdx) {
+  const task = tasks.find(t => t.id === taskId);
+  const isCorrect = selectedIdx === task.correct;
+
+  userAnswers[taskId] = {
+    userVal: selectedIdx,
+    isCorrect: isCorrect
+  };
+
+  updateStats();
+  renderTasks(currentFilter);
+}
+
+function handleInput(taskId) {
+  const task = tasks.find(t => t.id === taskId);
+  const inputEl = document.getElementById(`input-${taskId}`);
+  const userVal = inputEl.value.trim();
+
+  if (!userVal) return;
+
+  const isCorrect = task.answers.some(ans => ans.toLowerCase() === userVal.toLowerCase());
+
+  userAnswers[taskId] = {
+    userVal: userVal,
+    isCorrect: isCorrect
+  };
+
+  updateStats();
+  renderTasks(currentFilter);
+}
+
+function updateStats() {
+  const total = tasks.length;
+  const answeredCount = Object.keys(userAnswers).length;
+  const correctCount = Object.values(userAnswers).filter(a => a.isCorrect).length;
+
+  const percent = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+
+  document.getElementById("counter-answered").innerText = `Выполнено: ${answeredCount} / ${total}`;
+  document.getElementById("counter-score").innerText = `Баллы: ${percent}% (${correctCount} из ${total})`;
+
+  const progressBar = document.getElementById("progress-bar");
+  progressBar.style.width = `${(answeredCount / total) * 100}%`;
+}
+
+let currentFilter = "all";
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilter = btn.dataset.filter;
+    renderTasks(currentFilter);
+  });
+});
+
+document.getElementById("reset-btn").addEventListener("click", () => {
+  if (confirm("Вы уверены, что хотите сбросить весь прогресс?")) {
+    userAnswers = {};
+    updateStats();
+    renderTasks(currentFilter);
+  }
+});
+
+// Инициализация при загрузке
+renderTasks();
+updateStats();
+</script>
+</body>
+</html>
